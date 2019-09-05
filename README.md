@@ -1,5 +1,7 @@
 # modulestrap
 
+<sup>**Social Media Photo by [Danielle MacInnes](https://unsplash.com/@dsmacinnes) on [Unsplash](https://unsplash.com/)**</sup>
+
 A basic JS module bootstrap: `npx modulestrap project-name`
 
 - - -
