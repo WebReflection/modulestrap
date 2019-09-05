@@ -1,0 +1,14 @@
+{
+  "name": "modulestrap",
+  "version": "0.0.1",
+  "description": "A basic JS module bootstrap",
+  "bin": "index.js",
+  "keywords": [
+    "module",
+    "create",
+    "bootstrap",
+    "dual"
+  ],
+  "author": "Andrea Giammarchi",
+  "license": "ISC"
+}
