@@ -26,6 +26,7 @@ else if (!repo || /^--/.test(repo)) {
   process.exit(1);
 }
 
+const exported = repo.replace(/-(\S)/g, ($0, $1) => $1.toUpperCase());
 const dir = path.resolve(repo);
 
 const force = options.includes('--force');
@@ -140,7 +141,7 @@ fs.mkdir(dir, async err => {
                         exports: 'named',
                         file: './new.js',
                         format: 'iife',
-                        name: '${repo}'
+                        name: '${exported}'
                       }
                     };
                     `.replace(/^ {20}/mg, '').trimStart(),
@@ -174,7 +175,7 @@ fs.mkdir(dir, async err => {
                           exports: 'named',
                           file: './index.js',
                           format: 'iife',
-                          name: '${repo}'
+                          name: '${exported}'
                         }
                       };
                       `.replace(/^ {22}/mg, '').trimStart(),
@@ -207,7 +208,7 @@ fs.mkdir(dir, async err => {
                           exports: 'named',
                           file: './index.js',
                           format: 'iife',
-                          name: '${repo}'
+                          name: '${exported}'
                         }
                       };
                       `.replace(/^ {22}/mg, '').trimStart(),
