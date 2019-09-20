@@ -5,11 +5,14 @@ const os = require('os');
 const path = require('path');
 const {spawn} = require('child_process');
 
-const [,, repo, ...options] = process.argv;
+const argv = process.argv.slice(2);
+
+const options = argv.filter(option => /^-/.test(option));
+const repo = argv.filter(option => !/^-/.test(option)).shift();
 
 const dim = /\bMicrosoft\b/.test(os.release()) || os.platform() === 'win32' ? 90 : 2;
 
-if (repo.concat(options).includes('--help')) {
+if (options.includes('--help')) {
   const module = require(path.join(__dirname, 'package.json'));
   console.log(`
   \x1B[${dim}mversion ${module.version} (c) ${module.author} - ${module.license}\x1B[0m
@@ -23,7 +26,7 @@ if (repo.concat(options).includes('--help')) {
   `);
   process.exit();
 }
-else if (!repo || /^--/.test(repo)) {
+else if (!repo) {
   console.error(`🛑 no folder specified`);
   process.exit(1);
 }
@@ -265,7 +268,7 @@ function finalize() {
   );
   fs.writeFile(
     path.join(dir, '.npmignore'),
-    `coverage/\nnode_modules/\nrollup/\ntest/\npackage-lock.json\n`,
+    `coverage/\nnode_modules/\nrollup/\ntest/\npackage-lock.json\n.travis.yml\n`,
     error
   );
 }
