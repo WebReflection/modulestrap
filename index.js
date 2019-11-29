@@ -70,7 +70,7 @@ fs.mkdir(dir, async err => {
             ] : [],
             cover ? [
               'coveralls',
-              'istanbul'
+              'nyc'
             ] : [],
             node ? [] : [
               'rollup',
@@ -110,8 +110,8 @@ fs.mkdir(dir, async err => {
             }
             scripts.build += ' && npm run test';
             if (cover) {
-              scripts.coveralls = 'cat ./coverage/lcov.info | coveralls';
-              scripts.test = 'istanbul cover test/index.js';
+              scripts.coveralls = 'nyc report --reporter=text-lcov | coveralls';
+              scripts.test = 'nyc node test/index.js';
             }
             package.scripts = scripts;
             fs.writeFile(json, JSON.stringify(package, null, '  '), err => {
@@ -263,12 +263,12 @@ function finalize() {
   );
   fs.writeFile(
     path.join(dir, '.gitignore'),
-    `coverage/\nnode_modules/\npackage-lock.json\n`,
+    `.nyc_output/\nnode_modules/\npackage-lock.json\n`,
     error
   );
   fs.writeFile(
     path.join(dir, '.npmignore'),
-    `coverage/\nnode_modules/\nrollup/\ntest/\npackage-lock.json\n.travis.yml\n`,
+    `.nyc_output/\nnode_modules/\nrollup/\ntest/\npackage-lock.json\n.travis.yml\n`,
     error
   );
 }
