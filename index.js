@@ -96,7 +96,7 @@ fs.mkdir(dir, async err => {
               package.unpkg = babel ? 'min.js' : 'new.js';
             const scripts = {};
             scripts.build = 'npm run cjs';
-            scripts.cjs = 'ascjs ' + (noDefault ? '--no-default' : '') + 'esm cjs';
+            scripts.cjs = 'ascjs ' + (noDefault ? '--no-default ' : '') + 'esm cjs';
             if (rollup) {
               scripts['rollup:new'] = 'rollup --config rollup/new.config.js';
               scripts.build += ' && npm run rollup:new';
