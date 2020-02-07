@@ -23,6 +23,7 @@ if (options.includes('--help')) {
     --node  \x1B[${dim}m# to create a NodeJS only module\x1B[0m
     --ungap \x1B[${dim}m# to include polyfills\x1B[0m
     --force \x1B[${dim}m# to overwrite existent projects\x1B[0m
+    --no-default \x1B[${dim}m# to avoid exporting module.default\x1B[0m
   `);
   process.exit();
 }
@@ -35,6 +36,7 @@ const exported = repo.replace(/-(\S)/g, ($0, $1) => $1.toUpperCase());
 const dir = path.resolve(repo);
 
 const force = options.includes('--force');
+const noDefault = options.includes('--no-default');
 
 fs.mkdir(dir, async err => {
   if (err) {
@@ -94,7 +96,7 @@ fs.mkdir(dir, async err => {
               package.unpkg = babel ? 'min.js' : 'new.js';
             const scripts = {};
             scripts.build = 'npm run cjs';
-            scripts.cjs = 'ascjs esm cjs';
+            scripts.cjs = 'ascjs ' + (noDefault ? '--no-default' : '') + 'esm cjs';
             if (rollup) {
               scripts['rollup:new'] = 'rollup --config rollup/new.config.js';
               scripts.build += ' && npm run rollup:new';
@@ -107,6 +109,14 @@ fs.mkdir(dir, async err => {
                 scripts['rollup:index'] = 'rollup --config rollup/index.config.js';
                 scripts.build += ' && npm run rollup:index';
               }
+            }
+            if (noDefault) {
+              scripts['fix:default'] = "sed -i 's/({})/({}).default/' index.js";
+              if (rollup)
+                scripts['fix:default'] += " && sed -i 's/({})/({}).default/' new.js";
+              if (babel)
+                scripts['fix:default'] += " && sed -i 's/({})/({}).default/' min.js";
+              scripts.build += ' && npm run fix:default';
             }
             scripts.build += ' && npm run test';
             if (cover) {
