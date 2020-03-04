@@ -90,16 +90,21 @@ fs.mkdir(dir, async err => {
             const package = require(json);
             delete package.directories;
             package.version = '0.0.0';
-            package.main = 'cjs/index.js';
-            package.module = 'esm/index.js';
+            package.module = './esm/index.js';
+            package.main = './cjs/index.js';
+            package.type = 'module';
+            package.exports = {
+              "import": "./esm/index.js",
+              "default": "./cjs/index.js"
+            };
             if (!node)
-              package.unpkg = babel ? 'min.js' : 'new.js';
+              package.unpkg = babel ? 'min.js' : 'es.js';
             const scripts = {};
             scripts.build = 'npm run cjs';
             scripts.cjs = 'ascjs ' + (noDefault ? '--no-default ' : '') + 'esm cjs';
             if (rollup) {
-              scripts['rollup:new'] = 'rollup --config rollup/new.config.js';
-              scripts.build += ' && npm run rollup:new';
+              scripts['rollup:es'] = 'rollup --config rollup/es.config.js';
+              scripts.build += ' && npm run rollup:es';
               if (babel) {
                 scripts['rollup:babel'] = 'rollup --config rollup/babel.config.js';
                 scripts.min = 'uglifyjs index.js --support-ie8 --comments=/^!/ -c -m -o min.js';
@@ -113,7 +118,7 @@ fs.mkdir(dir, async err => {
             if (noDefault) {
               scripts['fix:default'] = "sed -i 's/({})/({}).default/' index.js";
               if (rollup)
-                scripts['fix:default'] += " && sed -i 's/({})/({}).default/' new.js";
+                scripts['fix:default'] += " && sed -i 's/({})/({}).default/' es.js";
               if (babel)
                 scripts['fix:default'] += " && sed -i 's/({})/({}).default/' min.js";
               scripts.build += ' && npm run fix:default';
@@ -130,7 +135,7 @@ fs.mkdir(dir, async err => {
                 fs.mkdir(path.join(dir, 'rollup'), err => {
                   force || error(err);
                   fs.writeFile(
-                    path.join(dir, 'rollup', 'new.config.js'),
+                    path.join(dir, 'rollup', 'es.config.js'),
                     `
                     import resolve from 'rollup-plugin-node-resolve';
                     import {terser} from 'rollup-plugin-terser';
@@ -154,7 +159,7 @@ fs.mkdir(dir, async err => {
                       `.trim() : ''}
                       output: {
                         exports: 'named',
-                        file: './new.js',
+                        file: './es.js',
                         format: 'iife',
                         name: '${exported}'
                       }
@@ -251,6 +256,11 @@ function error(err) {
 }
 
 function finalize() {
+  fs.writeFile(
+    path.join(dir, 'test', 'package.json'),
+    `{"type":"commonjs"}`,
+    error
+  );
   fs.writeFile(
     path.join(dir, 'test', 'index.js'),
     `require('../cjs');`,
