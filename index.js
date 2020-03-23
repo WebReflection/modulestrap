@@ -115,7 +115,7 @@ fs.mkdir(dir, async err => {
                 scripts.build += ' && npm run rollup:index';
               }
             }
-            if (noDefault) {
+            if (noDefault && !node) {
               scripts['fix:default'] = "sed -i 's/({})/({}).default/' index.js";
               if (rollup)
                 scripts['fix:default'] += " && sed -i 's/({})/({}).default/' es.js";
