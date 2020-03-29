@@ -15,20 +15,22 @@ const dim = /\bMicrosoft\b/.test(os.release()) || os.platform() === 'win32' ? 90
 if (options.includes('--help')) {
   const module = require(path.join(__dirname, 'package.json'));
   console.log(`
-  \x1B[${dim}mversion ${module.version} (c) ${module.author} - ${module.license}\x1B[0m
+  \x1B[1m${module.name}\x1B[0m [options] project-name
 
-  \x1B[1m${module.name}\x1B[0m project-name
-    --babel \x1B[${dim}m# to transpile for older browsers\x1B[0m
-    --cover \x1B[${dim}m# to include coverage tools\x1B[0m
-    --node  \x1B[${dim}m# to create a NodeJS only module\x1B[0m
-    --ungap \x1B[${dim}m# to include polyfills\x1B[0m
-    --force \x1B[${dim}m# to overwrite existent projects\x1B[0m
+  \x1B[${dim}m[options]\x1B[0m
+    --babel      \x1B[${dim}m# to transpile for older browsers\x1B[0m
+    --cover      \x1B[${dim}m# to include coverage tools\x1B[0m
+    --node       \x1B[${dim}m# to create a NodeJS only module\x1B[0m
+    --ungap      \x1B[${dim}m# to include polyfills\x1B[0m
+    --force      \x1B[${dim}m# to overwrite existent projects\x1B[0m
     --no-default \x1B[${dim}m# to avoid exporting module.default\x1B[0m
+
+  \x1B[${dim}mversion ${module.version} (c) ${module.author} - ${module.license}\x1B[0m
   `);
   process.exit();
 }
 else if (!repo) {
-  console.error(`🛑 no folder specified`);
+  console.error(`🛑 \x1B[${dim}mno\x1B[0m project-name \x1B[${dim}mspecified, try with\x1B[0m --help`);
   process.exit(1);
 }
 
@@ -283,12 +285,27 @@ function finalize() {
   );
   fs.writeFile(
     path.join(dir, '.gitignore'),
-    `.nyc_output/\nnode_modules/\npackage-lock.json\n`,
+    [
+      '.DS_Store',
+      '.nyc_output',
+      'node_modules/',
+      'package-lock.json',
+      ''
+    ].join('\n'),
     error
   );
   fs.writeFile(
     path.join(dir, '.npmignore'),
-    `.nyc_output/\nnode_modules/\nrollup/\ntest/\npackage-lock.json\n.travis.yml\n`,
+    [
+      '.DS_Store',
+      '.nyc_output',
+      '.travis.yml',
+      'node_modules/',
+      'rollup/',
+      'test/',
+      'package-lock.json',
+      ''
+    ].join('\n'),
     error
   );
 }
