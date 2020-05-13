@@ -23,7 +23,9 @@ if (options.includes('--help')) {
     --node       \x1B[${dim}m# to create a NodeJS only module\x1B[0m
     --ungap      \x1B[${dim}m# to include polyfills\x1B[0m
     --force      \x1B[${dim}m# to overwrite existent projects\x1B[0m
+    --ucjs       \x1B[${dim}m# use ucjs instead of ascjs\x1B[0m
     --no-default \x1B[${dim}m# to avoid exporting module.default\x1B[0m
+    --no-interop \x1B[${dim}m# alias for --no-default\x1B[0m
 
   \x1B[${dim}mversion ${module.version} (c) ${module.author} - ${module.license}\x1B[0m
   `);
@@ -37,8 +39,10 @@ else if (!repo) {
 const exported = repo.replace(/-(\S)/g, ($0, $1) => $1.toUpperCase());
 const dir = path.resolve(repo);
 
+const ucjs = options.includes('--ucjs') ? 'ucjs' : 'ascjs';
 const force = options.includes('--force');
-const noDefault = options.includes('--no-default');
+const noDefault = options.includes('--no-default') ||
+                  options.includes('--no-interop');
 
 fs.mkdir(dir, async err => {
   if (err) {
@@ -65,7 +69,7 @@ fs.mkdir(dir, async err => {
           ungap ? ' + ungap' : ''
         ));
         spawn('npm', ['init', '-y']).on('close', () => {
-          spawn('npm', ['i', '-D', 'ascjs'].concat(
+          spawn('npm', ['i', '-D', ucjs].concat(
             babel ? [
               '@babel/core',
               '@babel/preset-env',
@@ -103,7 +107,7 @@ fs.mkdir(dir, async err => {
               package.unpkg = babel ? 'min.js' : 'es.js';
             const scripts = {};
             scripts.build = 'npm run cjs';
-            scripts.cjs = 'ascjs ' + (noDefault ? '--no-default ' : '') + 'esm cjs';
+            scripts.cjs = ucjs + ' ' + (noDefault ? '--no-default ' : '') + 'esm cjs';
             if (rollup) {
               scripts['rollup:es'] = 'rollup --config rollup/es.config.js';
               scripts.build += ' && npm run rollup:es';

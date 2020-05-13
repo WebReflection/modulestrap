@@ -1,6 +1,7 @@
 {
   "name": "modulestrap",
   "version": "0.3.2",
+  "type": "commonjs",
   "description": "A basic JS module bootstrap",
   "bin": "index.js",
   "keywords": [

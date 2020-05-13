@@ -10,11 +10,14 @@ The goal of this binary module is to bootstrap any JS module that would like to 
 
 ```
 modulestrap project-name
-  --babel # to transpile for older browsers
-  --cover # to include coverage tools
-  --node  # to create a NodeJS only module
-  --ungap # to include polyfills
-  --force # to overwrite existent projects
+  --babel      # to transpile for older browsers
+  --cover      # to include coverage tools
+  --node       # to create a NodeJS only module
+  --ungap      # to include polyfills
+  --force      # to overwrite existent projects
+  --ucjs       # use ucjs instead of ascjs
+  --no-default # to avoid exporting module.default
+  --no-interop # alias for --no-default
 ```
 
 Accordingly with the passed flags, the binary will create _project-name_ and initialize it with most common tools to create dual modules.
