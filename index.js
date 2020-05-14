@@ -109,10 +109,11 @@ fs.mkdir(dir, async err => {
             scripts.build = 'npm run cjs';
             scripts.cjs = ucjs + ' ' + (noDefault ? '--no-default ' : '') + 'esm cjs';
             if (rollup) {
-              scripts['rollup:es'] = 'rollup --config rollup/es.config.js';
+              const cleanUp = ` && sed -i.bck 's/^var /window./' index.js && rm -rf index.js.bck`;
+              scripts['rollup:es'] = 'rollup --config rollup/es.config.js' + cleanUp;
               scripts.build += ' && npm run rollup:es';
               if (babel) {
-                scripts['rollup:babel'] = 'rollup --config rollup/babel.config.js';
+                scripts['rollup:babel'] = 'rollup --config rollup/babel.config.js' + cleanUp;
                 scripts.min = 'uglifyjs index.js --support-ie8 --comments=/^!/ -c -m -o min.js';
                 scripts.build += ' && npm run rollup:babel && npm run min';
               }
