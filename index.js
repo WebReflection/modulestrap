@@ -138,6 +138,30 @@ fs.mkdir(dir, async err => {
             fs.writeFile(json, JSON.stringify(package, null, '  '), err => {
               error(err);
               if (rollup) {
+                fs.writeFile(
+                  path.join(dir, 'test', 'index.html'),
+                  `<!DOCTYPE html>
+                  <html lang="en">
+                  <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+                    <title>${exported}</title>
+                    <script type="module">
+                    import(
+                      /^(?:localhost|[0-9.]+)$/.test(location.hostname) ?
+                      '../esm/index.js' :
+                      'https://unpkg.com/${exported}?module'
+                    )
+                    .then((module) => {
+                      console.log(module);
+                    });
+                    </script>
+                  </head>
+                  <body></body>
+                  </html>
+                  `.replace(/^\s{18}/mg, ''),
+                  error
+                );
                 fs.mkdir(path.join(dir, 'rollup'), err => {
                   force || error(err);
                   fs.writeFile(
