@@ -145,12 +145,12 @@ fs.mkdir(dir, async err => {
                   <head>
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-                    <title>${exported}</title>
+                    <title>${repo}</title>
                     <script type="module">
                     import(
                       /^(?:localhost|[0-9.]+)$/.test(location.hostname) ?
                       '../esm/index.js' :
-                      'https://unpkg.com/${exported}?module'
+                      'https://unpkg.com/${repo}?module'
                     )
                     .then((module) => {
                       console.log(module);
