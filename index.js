@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/*! (c) Andrea Giammarchi */
+
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -74,7 +76,7 @@ fs.mkdir(dir, async err => {
               '@babel/core',
               '@babel/preset-env',
               'rollup-plugin-babel',
-              'uglify-js',
+              'terser',
             ] : [],
             cover ? [
               'coveralls',
@@ -113,7 +115,7 @@ fs.mkdir(dir, async err => {
               scripts.build += ' && npm run rollup:es';
               if (babel) {
                 scripts['rollup:babel'] = `rollup --config rollup/babel.config.js && sed -i.bck 's/^var /self./' index.js && rm -rf index.js.bck`;
-                scripts.min = 'uglifyjs index.js --support-ie8 --comments=/^!/ -c -m -o min.js';
+                scripts.min = "terser index.js --comments='/^!/' -c -m -o min.js";
                 scripts.build += ' && npm run rollup:babel && npm run min';
               }
               else {
@@ -148,7 +150,7 @@ fs.mkdir(dir, async err => {
                     <title>${repo}</title>
                     <script type="module">
                     import(
-                      /^(?:localhost|[0-9.]+)$/.test(location.hostname) ?
+                      /^(?:localhost|\[::1\]|127(?:\.\d+){3})$/.test(location.hostname) ?
                       '../esm/index.js' :
                       'https://unpkg.com/${repo}?module'
                     )
