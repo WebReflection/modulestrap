@@ -338,7 +338,7 @@ function finalize() {
       setTimeout(
         () => {
           spawn('npm', ['run', 'build']);
-          fs.unlink(path.join(dir, 'package-lock.json'), error);
+          fs.unlink(path.join(dir, 'package-lock.json'), Object);
         },
         500
       );
