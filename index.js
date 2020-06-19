@@ -289,6 +289,37 @@ function error(err) {
 
 function finalize() {
   fs.writeFile(
+    path.join(dir, '.npmrc'),
+    [
+      'package-lock=false',
+      ''
+    ].join('\n'),
+    error
+  );
+  fs.writeFile(
+    path.join(dir, '.gitignore'),
+    [
+      '.DS_Store',
+      '.nyc_output',
+      'node_modules/',
+      ''
+    ].join('\n'),
+    error
+  );
+  fs.writeFile(
+    path.join(dir, '.npmignore'),
+    [
+      '.DS_Store',
+      '.nyc_output',
+      '.travis.yml',
+      'node_modules/',
+      'rollup/',
+      'test/',
+      ''
+    ].join('\n'),
+    error
+  );
+  fs.writeFile(
     path.join(dir, 'test', 'package.json'),
     `{"type":"commonjs"}`,
     error
@@ -307,35 +338,9 @@ function finalize() {
       setTimeout(
         () => {
           spawn('npm', ['run', 'build']);
-          fs.unlink(path.join(dir, 'package-lock.json'), error);
         },
         500
       );
     }
-  );
-  fs.writeFile(
-    path.join(dir, '.gitignore'),
-    [
-      '.DS_Store',
-      '.nyc_output',
-      'node_modules/',
-      'package-lock.json',
-      ''
-    ].join('\n'),
-    error
-  );
-  fs.writeFile(
-    path.join(dir, '.npmignore'),
-    [
-      '.DS_Store',
-      '.nyc_output',
-      '.travis.yml',
-      'node_modules/',
-      'rollup/',
-      'test/',
-      'package-lock.json',
-      ''
-    ].join('\n'),
-    error
   );
 }
