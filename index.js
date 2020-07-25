@@ -75,7 +75,7 @@ fs.mkdir(dir, async err => {
             babel ? [
               '@babel/core',
               '@babel/preset-env',
-              'rollup-plugin-babel',
+              '@rollup/plugin-babel',
               'terser',
             ] : [],
             cover ? [
@@ -84,7 +84,7 @@ fs.mkdir(dir, async err => {
             ] : [],
             node ? [] : [
               'rollup',
-              'rollup-plugin-node-resolve',
+              '@rollup/plugin-node-resolve',
               'rollup-plugin-terser'
             ],
             ungap ? [
@@ -169,7 +169,7 @@ fs.mkdir(dir, async err => {
                   fs.writeFile(
                     path.join(dir, 'rollup', 'es.config.js'),
                     `
-                    import resolve from 'rollup-plugin-node-resolve';
+                    import {nodeResolve} from '@rollup/plugin-node-resolve';
                     import {terser} from 'rollup-plugin-terser';
                     ${ungap ? `
                     import includePaths from 'rollup-plugin-includepaths';
@@ -182,7 +182,7 @@ fs.mkdir(dir, async err => {
                           include: {},
                         }),
                         `.trim() : ''}
-                        resolve({module: true}),
+                        nodeResolve(),
                         terser()
                       ],
                       ${ungap ? `
@@ -203,8 +203,8 @@ fs.mkdir(dir, async err => {
                     fs.writeFile(
                       path.join(dir, 'rollup', 'babel.config.js'),
                       `
-                      import resolve from 'rollup-plugin-node-resolve';
-                      import babel from 'rollup-plugin-babel';
+                      import {nodeResolve} from '@rollup/plugin-node-resolve';
+                      import babel from '@rollup/plugin-babel';
                       ${ungap ? `
                       import includePaths from 'rollup-plugin-includepaths';
                       `.trim() : ''}
@@ -216,8 +216,11 @@ fs.mkdir(dir, async err => {
                             include: {},
                           }),
                           `.trim() : ''}
-                          resolve({module: true}),
-                          babel({presets: ['@babel/preset-env']})
+                          nodeResolve(),
+                          babel({
+                            presets: ['@babel/preset-env'],
+                            babelHelpers: 'bundled'
+                          })
                         ],
                         ${ungap ? `
                         context: 'null',
@@ -238,7 +241,7 @@ fs.mkdir(dir, async err => {
                     fs.writeFile(
                       path.join(dir, 'rollup', 'index.config.js'),
                       `
-                      import resolve from 'rollup-plugin-node-resolve';
+                      import {nodeResolve} from '@rollup/plugin-node-resolve';
                       ${ungap ? `
                       import includePaths from 'rollup-plugin-includepaths';
                       `.trim() : ''}
@@ -250,7 +253,7 @@ fs.mkdir(dir, async err => {
                             include: {},
                           }),
                           `.trim() : ''}
-                          resolve({module: true})
+                          nodeResolve()
                         ],
                         ${ungap ? `
                         context: 'null',
