@@ -102,8 +102,11 @@ fs.mkdir(dir, async err => {
             package.main = './cjs/index.js';
             package.type = 'module';
             package.exports = {
-              "import": "./esm/index.js",
-              "default": "./cjs/index.js"
+              ".": {
+                "import": "./esm/index.js",
+                "default": "./cjs/index.js"
+              },
+              "./package.json": "./package.json"
             };
             if (!node)
               package.unpkg = babel ? 'min.js' : 'es.js';
