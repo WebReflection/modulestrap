@@ -80,7 +80,7 @@ fs.mkdir(dir, async err => {
             ] : [],
             cover ? [
               'coveralls',
-              'nyc'
+              'c8'
             ] : [],
             node ? [] : [
               'rollup',
@@ -136,8 +136,8 @@ fs.mkdir(dir, async err => {
             }
             scripts.build += ' && npm run test';
             if (cover) {
-              scripts.coveralls = 'nyc report --reporter=text-lcov | coveralls';
-              scripts.test = 'nyc node test/index.js';
+              scripts.coveralls = 'c8 report --reporter=text-lcov | coveralls';
+              scripts.test = 'c8 node test/index.js';
             }
             package.scripts = scripts;
             fs.writeFile(json, JSON.stringify(package, null, '  '), err => {
@@ -307,6 +307,7 @@ function finalize() {
     [
       '.DS_Store',
       '.nyc_output',
+      'coverage/',
       'node_modules/',
       ''
     ].join('\n'),
@@ -318,6 +319,7 @@ function finalize() {
       '.DS_Store',
       '.nyc_output',
       '.travis.yml',
+      'coverage/',
       'node_modules/',
       'rollup/',
       'test/',
