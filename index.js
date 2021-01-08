@@ -193,6 +193,7 @@ fs.mkdir(dir, async err => {
                       moduleContext: 'null',
                       `.trim() : ''}
                       output: {
+                        esModule: false,
                         exports: 'named',
                         file: './es.js',
                         format: 'iife',
@@ -230,6 +231,7 @@ fs.mkdir(dir, async err => {
                         moduleContext: 'null',
                         `.trim() : ''}
                         output: {
+                          esModule: false,
                           exports: 'named',
                           file: './index.js',
                           format: 'iife',
@@ -263,6 +265,7 @@ fs.mkdir(dir, async err => {
                         moduleContext: 'null',
                         `.trim() : ''}
                         output: {
+                          esModule: false,
                           exports: 'named',
                           file: './index.js',
                           format: 'iife',
