@@ -30,7 +30,7 @@ if (options.includes('--help')) {
     --no-interop \x1B[${dim}m# alias for --no-default\x1B[0m
     --lint       \x1B[${dim}m# eslint\x1B[0m
 
-  \x1B[${dim}mversion ${module.version} (c) ${module.author} - ${module.license}\x1B[0m
+  \x1B[${dim}mversion ${module.version} (c) Andrea Giammarchi - ${module.license}\x1B[0m
   `);
   process.exit();
 }
