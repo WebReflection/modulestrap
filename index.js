@@ -28,6 +28,7 @@ if (options.includes('--help')) {
     --ucjs       \x1B[${dim}m# use ucjs instead of ascjs\x1B[0m
     --no-default \x1B[${dim}m# to avoid exporting module.default\x1B[0m
     --no-interop \x1B[${dim}m# alias for --no-default\x1B[0m
+    --lint       \x1B[${dim}m# eslint\x1B[0m
 
   \x1B[${dim}mversion ${module.version} (c) ${module.author} - ${module.license}\x1B[0m
   `);
@@ -43,6 +44,7 @@ const dir = path.resolve(repo);
 
 const ucjs = options.includes('--ucjs') ? 'ucjs' : 'ascjs';
 const force = options.includes('--force');
+const lint = options.includes('--lint');
 const noDefault = options.includes('--no-default') ||
                   options.includes('--no-interop');
 
@@ -69,6 +71,8 @@ fs.mkdir(dir, async err => {
           cover ? ' + code coverage' : ''
         ) + (
           ungap ? ' + ungap' : ''
+        ) + (
+          lint ? ' + eslint' : ''
         ));
         spawn('npm', ['init', '-y']).on('close', () => {
           spawn('npm', ['i', '-D', ucjs].concat(
@@ -90,6 +94,9 @@ fs.mkdir(dir, async err => {
             ungap ? [
               'rollup-plugin-includepaths',
               '@ungap/degap'
+            ] : [],
+            lint ? [
+              'eslint'
             ] : []
           )).on('close', () => {
             console.log('setup package.json');
@@ -138,6 +145,28 @@ fs.mkdir(dir, async err => {
             if (cover) {
               scripts.coveralls = 'c8 report --reporter=text-lcov | coveralls';
               scripts.test = 'c8 node test/index.js';
+            }
+            if (lint) {
+              scripts.test = scripts.test ? ('eslint esm/ && ' + scripts.test) : 'eslint esm/';
+              const config = {
+                env: {es2021: true},
+                extends: "eslint:recommended",
+                parserOptions: {
+                  // theoretically this should not be needed
+                  ecmaVersion: 12,
+                  sourceType: "module"
+                },
+                rules: {}
+              };
+              if (node)
+                config.env.node = true;
+              else
+                config.env.browser = true;
+              fs.writeFile(
+                path.join(dir, '.eslintrc.json'),
+                JSON.stringify(config, null, '  '),
+                error
+              );
             }
             package.scripts = scripts;
             fs.writeFile(json, JSON.stringify(package, null, '  '), err => {
@@ -321,6 +350,7 @@ function finalize() {
     [
       '.DS_Store',
       '.nyc_output',
+      '.eslintrc.json',
       '.travis.yml',
       'coverage/',
       'node_modules/',
