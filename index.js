@@ -89,7 +89,7 @@ fs.mkdir(dir, async err => {
             node ? [] : [
               'rollup',
               '@rollup/plugin-node-resolve',
-              'rollup-plugin-terser'
+              '@rollup/plugin-terser'
             ],
             ungap ? [
               'rollup-plugin-includepaths',
@@ -202,7 +202,7 @@ fs.mkdir(dir, async err => {
                     path.join(dir, 'rollup', 'es.config.js'),
                     `
                     import {nodeResolve} from '@rollup/plugin-node-resolve';
-                    import {terser} from 'rollup-plugin-terser';
+                    import terser from '@rollup/plugin-terser';
                     ${ungap ? `
                     import includePaths from 'rollup-plugin-includepaths';
                     `.trim() : ''}
@@ -351,6 +351,7 @@ function finalize() {
       '.DS_Store',
       '.nyc_output',
       '.eslintrc.json',
+      '.github/',
       '.travis.yml',
       'coverage/',
       'node_modules/',
