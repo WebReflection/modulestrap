@@ -22,6 +22,7 @@ if (options.includes('--help')) {
   \x1B[${dim}m[options]\x1B[0m
     --babel      \x1B[${dim}m# to transpile for older browsers\x1B[0m
     --cover      \x1B[${dim}m# to include coverage tools\x1B[0m
+    --esx        \x1B[${dim}m# to include Babel ESX transformer\x1B[0m
     --node       \x1B[${dim}m# to create a NodeJS only module\x1B[0m
     --ungap      \x1B[${dim}m# to include polyfills\x1B[0m
     --force      \x1B[${dim}m# to overwrite existent projects\x1B[0m
@@ -43,6 +44,7 @@ const exported = repo.replace(/-(\S)/g, ($0, $1) => $1.toUpperCase());
 const dir = path.resolve(repo);
 
 const ucjs = options.includes('--ucjs') ? 'ucjs' : 'ascjs';
+const esx = options.includes('--esx');
 const force = options.includes('--force');
 const lint = options.includes('--lint');
 const noDefault = options.includes('--no-default') ||
@@ -63,12 +65,14 @@ fs.mkdir(dir, async err => {
         process.chdir(dir);
         const node = options.includes('--node') || options.includes('--nodejs');
         const cover = options.includes('--cover');
-        const babel = !node && options.includes('--babel');
+        const babel = esx || (!node && options.includes('--babel'));
         const ungap = !node && options.includes('--ungap');
         console.log('initializing npm & modules' + (
           babel ? ' + babel' : ''
         ) + (
           cover ? ' + code coverage' : ''
+        ) + (
+          esx ? ' + ESX' : ''
         ) + (
           ungap ? ' + ungap' : ''
         ) + (
@@ -85,6 +89,10 @@ fs.mkdir(dir, async err => {
             cover ? [
               'coveralls',
               'c8'
+            ] : [],
+            esx ? [
+              '@ungap/esxtoken',
+              '@ungap/babel-plugin-transform-esx'
             ] : [],
             node ? [] : [
               'rollup',
@@ -203,6 +211,7 @@ fs.mkdir(dir, async err => {
                     `
                     import {nodeResolve} from '@rollup/plugin-node-resolve';
                     import terser from '@rollup/plugin-terser';
+                    ${esx ? `import babel from '@rollup/plugin-babel';` : ''}
                     ${ungap ? `
                     import includePaths from 'rollup-plugin-includepaths';
                     `.trim() : ''}
@@ -215,6 +224,7 @@ fs.mkdir(dir, async err => {
                         }),
                         `.trim() : ''}
                         nodeResolve(),
+                        ${esx ? `babel({plugins: [["@ungap/transform-esx", { "polyfill": "import" }]]}),` : ''}
                         terser()
                       ],
                       ${ungap ? `
@@ -251,6 +261,7 @@ fs.mkdir(dir, async err => {
                           `.trim() : ''}
                           nodeResolve(),
                           babel({
+                            ${esx ? `plugins: [["@ungap/transform-esx", { "polyfill": "import" }]],` : ''}
                             presets: ['@babel/preset-env'],
                             babelHelpers: 'bundled'
                           })
@@ -276,6 +287,7 @@ fs.mkdir(dir, async err => {
                       path.join(dir, 'rollup', 'index.config.js'),
                       `
                       import {nodeResolve} from '@rollup/plugin-node-resolve';
+                      ${esx ? `import babel from '@rollup/plugin-babel';` : ''}
                       ${ungap ? `
                       import includePaths from 'rollup-plugin-includepaths';
                       `.trim() : ''}
@@ -287,7 +299,8 @@ fs.mkdir(dir, async err => {
                             include: {},
                           }),
                           `.trim() : ''}
-                          nodeResolve()
+                          nodeResolve(),
+                          ${esx ? `babel({plugins: [["@ungap/transform-esx", { "polyfill": "import" }]]})` : ''}
                         ],
                         ${ungap ? `
                         context: 'null',
