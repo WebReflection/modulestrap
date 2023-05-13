@@ -352,6 +352,7 @@ function finalize() {
     [
       '.DS_Store',
       '.nyc_output',
+      'v8.log',
       'coverage/',
       'node_modules/',
       ''
@@ -366,6 +367,7 @@ function finalize() {
       '.eslintrc.json',
       '.github/',
       '.travis.yml',
+      'v8.log',
       'coverage/',
       'node_modules/',
       'rollup/',
