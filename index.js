@@ -355,6 +355,8 @@ function finalize() {
       'v8.log',
       'coverage/',
       'node_modules/',
+      'cjs/',
+      '!cjs/package.json',
       ''
     ].join('\n'),
     error
